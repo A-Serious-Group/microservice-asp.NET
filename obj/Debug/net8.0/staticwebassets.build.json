@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "2+91bc2jpZlRXBBguAji19lhF+0kyZY+dXDYSRYKcKc=",
+  "Source": "CarMicroserviceAPI",
+  "BasePath": "_content/CarMicroserviceAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

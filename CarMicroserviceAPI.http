@@ -1,0 +1,6 @@
+@CarMicroserviceAPI_HostAddress = http://localhost:5212
+
+GET {{CarMicroserviceAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
