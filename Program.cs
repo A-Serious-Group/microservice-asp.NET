@@ -1,11 +1,21 @@
 using Microsoft.EntityFrameworkCore;
 using MvcCars.Data;
 
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddControllers();
 
 // Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options => {
+    options.AddPolicy("AllowAll", builder => {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
 
 var connectionString = builder.Configuration.GetConnectionString("CarsContext");
 
@@ -47,6 +57,12 @@ app.MapGet("/weatherforecast", () =>
 })
 .WithName("GetWeatherForecast")
 .WithOpenApi();
+
+// app.MapControllerRoute(
+//     name: "default",
+//     pattern: "api/{controller=Cars}/{action?}/{id?}");
+
+app.MapControllers();
 
 app.Run();
 

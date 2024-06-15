@@ -3,3 +3,4 @@ node_modules
 appsettings.json
 bin
 Propoerties
+docker-compose.yml

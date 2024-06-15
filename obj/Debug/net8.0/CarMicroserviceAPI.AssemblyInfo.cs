@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("CarMicroserviceAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9016a011483d4a2ef3071ceb8ad133e8669ad4de")]
 [assembly: System.Reflection.AssemblyProductAttribute("CarMicroserviceAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("CarMicroserviceAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
