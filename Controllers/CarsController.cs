@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarMicroserviceAPI.Models;
 using MvcCars.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarMicroserviceAPI.Controllers
 {
@@ -25,25 +20,57 @@ namespace CarMicroserviceAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Car>>> GetCars()
         {
-            return await _context.Cars.ToListAsync();
+            return await _context.Cars.Include(c => c.Owner).ToListAsync();
         }
 
         // GET: api/Cars/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Car>> GetCar(int id)
+        public async Task<ActionResult<CarDto>> GetCar(int id)
         {
-            var car = await _context.Cars.FindAsync(id);
+            var car = await _context.Cars
+                .Include(c => c.Owner)
+                .FirstOrDefaultAsync(c => c.Id == id);
 
             if (car == null)
             {
                 return NotFound();
             }
 
-            return car;
+            var serviceRecords = await _context.ServiceRecords
+                   .Where(sr => sr.CarId == car.Id)
+                   .ToListAsync();
+
+            var serviceRecordsDto = serviceRecords?.Select(sr => new ServiceRecordsDto
+            {
+                Id = sr.Id,
+                CarId = sr.CarId,
+                Description = sr.Description,
+                ServiceDate = sr.ServiceDate
+            }).ToList();
+
+            var carDto = new CarDto
+            {
+                Id = car.Id,
+                NameCar = car.NameCar,
+                ModelCar = car.ModelCar,
+                Year = car.Year,
+                ConstructionCompany = car.ConstructionCompany,
+                Owner = car.Owner != null ? new OwnerDto
+                {
+                    Id = car.Owner.Id,
+                    Name = car.Owner.Name,
+                    Address = car.Owner.Address,
+                    PhoneNumber = car.Owner.PhoneNumber
+                } : null,
+                ServiceRecords = serviceRecordsDto
+            };
+
+            return Ok(carDto);
         }
 
+
+
         // PUT: api/Cars/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCar(int id, Car car)
         {
@@ -53,6 +80,11 @@ namespace CarMicroserviceAPI.Controllers
             }
 
             _context.Entry(car).State = EntityState.Modified;
+
+            if (car.Owner != null)
+            {
+                _context.Entry(car.Owner).State = EntityState.Modified;
+            }
 
             try
             {
@@ -70,19 +102,25 @@ namespace CarMicroserviceAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(car);
         }
 
+
         // POST: api/Cars
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Car>> PostCar(Car car)
         {
+            if (car.Owner != null)
+            {
+                _context.Owners.Attach(car.Owner);
+            }
+
             _context.Cars.Add(car);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetCar", new { id = car.Id }, car);
         }
+
 
         // DELETE: api/Cars/5
         [HttpDelete("{id}")]

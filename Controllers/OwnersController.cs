@@ -1,12 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using CarMicroserviceAPI.Models;
 using MvcCars.Data;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CarMicroserviceAPI.Controllers
 {
@@ -25,14 +20,16 @@ namespace CarMicroserviceAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Owner>>> GetOwners()
         {
-            return await _context.Owners.ToListAsync();
+            return await _context.Owners.Include(o => o.Cars).ToListAsync();
         }
 
         // GET: api/Owners/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Owner>> GetOwner(int id)
         {
-            var owner = await _context.Owners.FindAsync(id);
+            var owner = await _context.Owners
+                .Include(o => o.Cars)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
             if (owner == null)
             {
@@ -43,7 +40,6 @@ namespace CarMicroserviceAPI.Controllers
         }
 
         // PUT: api/Owners/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOwner(int id, Owner owner)
         {
@@ -70,11 +66,10 @@ namespace CarMicroserviceAPI.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(owner);
         }
 
         // POST: api/Owners
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Owner>> PostOwner(Owner owner)
         {

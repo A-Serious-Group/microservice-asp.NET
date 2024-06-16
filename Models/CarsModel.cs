@@ -10,5 +10,8 @@ namespace CarMicroserviceAPI.Models
         public string? ModelCar { get; set; }
         public int Year { get; set; }
         public string? ConstructionCompany { get; set; }
+
+        public int? OwnerId { get; set; }
+        public Owner? Owner { get; set; }
     }
 }
